@@ -1,2 +1,2 @@
 # baroque-cs
-The Baroque programming language's C# implementation
+Baroque is my own C# implementation of the Lox programming language
