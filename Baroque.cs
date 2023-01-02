@@ -58,7 +58,7 @@ public class Baroque
 
         foreach (var token in tokens)
         {
-            Console.WriteLine(token);
+            Console.WriteLine(token.ToString());
         }
     }
 
@@ -69,7 +69,7 @@ public class Baroque
 
     private static void Report(int line, string where, string message)
     {
-        Console.WriteLine("[line {0}] Error{1}: {3}", line, where, message);
+        Console.WriteLine("[line {0}] Error{1}: {2}", line, where, message);
         hadError = true;
     }
 

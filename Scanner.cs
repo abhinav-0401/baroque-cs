@@ -9,6 +9,27 @@ public class Scanner
     private int current = 0;
     private int line = 1;
 
+    private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
+    {
+        {"and",    TokenType.AND},
+        {"class",  TokenType.CLASS},
+        {"else",   TokenType.ELSE},
+        {"false",  TokenType.FALSE},
+        {"for",    TokenType.FOR},
+        {"fun",    TokenType.FUN},
+        {"if",     TokenType.IF},
+        {"nil",    TokenType.NIL},
+        {"or",     TokenType.OR},
+        {"print",  TokenType.PRINT},
+        {"return", TokenType.RETURN},
+        {"super",  TokenType.SUPER},
+        {"this",   TokenType.THIS},
+        {"true",   TokenType.TRUE},
+        {"var",    TokenType.VAR},
+        {"while",  TokenType.WHILE},
+    };
+
+
     public Scanner(string source)
     {
         this.source = source;
@@ -31,7 +52,8 @@ public class Scanner
     {
         char c = Advance();
         switch (c)
-        {
+        {   
+            // Simple single character tokens
             case '(': AddToken(TokenType.LEFT_PAREN); break;
             case ')': AddToken(TokenType.RIGHT_PAREN); break;
             case '{': AddToken(TokenType.LEFT_BRACE); break;
@@ -42,6 +64,8 @@ public class Scanner
             case '+': AddToken(TokenType.PLUS); break;
             case ';': AddToken(TokenType.SEMICOLON); break;
             case '*': AddToken(TokenType.STAR); break;
+
+            // Ambiguous character-length tokens
             case '!':
                 AddToken(Match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
                 break;
@@ -65,11 +89,92 @@ public class Scanner
                     AddToken(TokenType.SLASH);
                 }
                 break;
+            
+            // Characters to be skipped while lexing
+            case ' ':
+            case '\r':
+            case '\t':
+                // Ignore whitespace.
+                break;
+            case '\n':
+                line++;
+                break;
 
+            // Literals
+            case '"': CreateString(); break;
+
+            // Unknown character encountered
+            // or Number literals + Identifiers + Keywords
             default:
-                Baroque.Error(line, String.Format("Unexpected character {0}", c));
+                if (IsDigit(c))
+                {
+                    CreateNumber();
+                }
+                else if (IsAlpha(c))
+                {
+                    CreateIdentifier();
+                }
+                else
+                {
+                    Baroque.Error(line, String.Format("Unexpected character {0}", c));
+                }
                 break;
         }
+    }
+
+    private void CreateIdentifier()
+    {
+        while (IsAlphaNumeric(Peek())) Advance();
+
+        string text = source.Substring(start, current - start);
+
+        TokenType type;
+        if (keywords.TryGetValue(text, out type))
+        {
+            AddToken(type);
+        }
+        else
+        {
+            AddToken(TokenType.IDENTIFIER);
+        }
+    }
+
+    private void CreateNumber()
+    {
+        while (IsDigit(Peek())) Advance();
+
+        // Look for a fractional part
+        if (Peek() == '.' && IsDigit(PeekNext()))
+        {
+            // Consume the "."
+            Advance();
+
+            while (IsDigit(Peek())) Advance();
+        }
+
+        AddToken(TokenType.NUMBER, double.Parse(source.Substring(start, current - start), System.Globalization.CultureInfo.InvariantCulture));
+    }
+
+    private void CreateString()
+    {
+        while (Peek() != '"' && !IsAtEnd())
+        {
+            if (Peek() == '\n') line++;
+            Advance();
+        }
+
+        if (IsAtEnd())
+        {
+            Baroque.Error(line, "Unterminated String");
+            return;
+        }
+
+        // The closing "
+        Advance();
+
+        // Trim the surrounding quotes for the literal
+        string value = source.Substring(start + 1, current - start - 1);
+        AddToken(TokenType.STRING, value);
     }
 
     // checks if the character at the current position is equal to the character passed in
@@ -91,6 +196,29 @@ public class Scanner
         return source[current];
     }
 
+    private char PeekNext()
+    {
+        if (current + 1 >= source.Length) return '\0';
+        return source[current + 1];
+    }
+
+    private bool IsAlpha(char c)
+    {
+        return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+            c == '_';
+    }
+
+    private bool IsAlphaNumeric(char c)
+    {
+        return IsAlpha(c) || IsDigit(c);
+    }
+
+    private bool IsDigit(char c)
+    {
+        return c >= '0' && c <= '9';
+    }
+
     private bool IsAtEnd()
     {
         return current >= source.Length;
@@ -108,7 +236,7 @@ public class Scanner
 
     private void AddToken(TokenType type, Object? literal)
     {
-        string text = source.Substring(start, current);
+        string text = source.Substring(start, current - start);
         tokens.Add(new Token(type, text, literal, line));
     }
 }
