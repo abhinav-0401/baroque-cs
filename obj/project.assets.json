@@ -8,24 +8,26 @@
     "net7.0": []
   },
   "packageFolders": {
-    "/home/abhinav0401/.nuget/packages/": {}
+    "C:\\Users\\ABHINAV\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/abhinav0401/Documents/cs/csproj/baroque/baroque.csproj",
+      "projectUniqueName": "E:\\cs\\csproj\\baroque\\baroque.csproj",
       "projectName": "baroque",
-      "projectPath": "/home/abhinav0401/Documents/cs/csproj/baroque/baroque.csproj",
-      "packagesPath": "/home/abhinav0401/.nuget/packages/",
-      "outputPath": "/home/abhinav0401/Documents/cs/csproj/baroque/obj/",
+      "projectPath": "E:\\cs\\csproj\\baroque\\baroque.csproj",
+      "packagesPath": "C:\\Users\\ABHINAV\\.nuget\\packages\\",
+      "outputPath": "E:\\cs\\csproj\\baroque\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/abhinav0401/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\ABHINAV\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -59,7 +61,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.101/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }
